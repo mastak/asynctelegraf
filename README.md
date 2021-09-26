@@ -1,6 +1,6 @@
-[![Build Status](https://github.com/mastak/asynctelegraf/workflows/default/badge.svg)](https://github.com/mastak/asynctelegraf/actions?query=workflow%3Adefault) 
-[![codecov](https://codecov.io/gh/mastak/asynctelegraf/branch/master/graph/badge.svg)](https://codecov.io/gh/mastak/asynctelegraf) 
-![PyPI](https://img.shields.io/pypi/v/asynctelegraf.svg?label=pypi%20version)  
+[![Build Status](https://github.com/mastak/asynctelegraf/workflows/default/badge.svg)](https://github.com/mastak/asynctelegraf/actions?query=workflow%3Adefault)
+[![codecov](https://codecov.io/gh/mastak/asynctelegraf/branch/master/graph/badge.svg)](https://codecov.io/gh/mastak/asynctelegraf)
+![PyPI](https://img.shields.io/pypi/v/asynctelegraf.svg?label=pypi%20version)
 ![GitHub](https://img.shields.io/github/license/mastak/asynctelegraf.svg)
 
 # asynctelegraf
