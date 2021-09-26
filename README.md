@@ -5,7 +5,7 @@
 
 # asynctelegraf
 
-Python asyncio client for [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/), compatible with AWS cloudwatch metrics (statsd)
+Asyncio python client for [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/), compatible with AWS cloudwatch metrics (statsd)
 
 ## Install
 
