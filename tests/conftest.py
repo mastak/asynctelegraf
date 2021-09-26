@@ -1,12 +1,10 @@
 import asyncio
 import socket
-import time
 from contextlib import asynccontextmanager
-from unittest.mock import patch, MagicMock
 
 import pytest
 
-from asynctelegraf import TelegrafClient, UDPProtocol
+from asynctelegraf import TelegrafClient
 from asynctelegraf.client import MetricSender
 from tests import helpers
 

@@ -1,0 +1,26 @@
+name: Workflow for tests asynctelegraf
+on: [push, pull_request]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9]
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.python-version }}-
+      - name: Install dependencies
+        run: pip install -r requirements.dev.txt
+      - run: make lint
+      - run: make test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2

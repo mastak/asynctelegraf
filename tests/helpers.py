@@ -1,8 +1,8 @@
 import asyncio
 import io
+import logging
 import socket
 import typing
-import logging
 
 logger = logging.getLogger('telegraf_server')
 

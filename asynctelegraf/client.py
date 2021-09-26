@@ -8,7 +8,7 @@ import typing as t
 from asyncio import iscoroutinefunction
 from functools import wraps
 
-from asynctelegraf.protocol import UDPProtocol, TCPProtocol, StatsdProtocol
+from asynctelegraf.protocol import TCPProtocol, TelegrafProtocol, UDPProtocol
 from asynctelegraf.types import TagsType
 from asynctelegraf.utils import LimitedLog
 
@@ -61,7 +61,7 @@ class TelegrafClient:
 
     def timed(self, metric: str, rate: t.Optional[float] = None,
               tags: TagsType = None, use_ms: bool = False) -> 'TimedContextManagerDecorator':
-        return TimedContextManagerDecorator(self, metric, tags, rate, use_ms)
+        return TimedContextManagerDecorator(telegraf=self, metric=metric, tags=tags, rate=rate, use_ms=use_ms)
 
     def _push_metric(self, metric: str, value: str, type_code: str, rate: t.Optional[float] = None,
                      tags: TagsType = None) -> None:
@@ -109,8 +109,8 @@ class MetricSender:
         self._batch_size = batch_size
 
         self._is_stopping = False
-        self.protocol: t.Optional['StatsdProtocol'] = None
-        self.stopped: t.Union[True, asyncio.Event] = True
+        self.protocol: t.Optional['TelegrafProtocol'] = None
+        self.stopped: t.Union[True, asyncio.Event] = True  # type: ignore
         self._queue_size = queue_size
         # add all metrics in queue.Queue while client is not started
         # asyncio.Queue cannot be used, because asyncio loop is not available here
@@ -141,7 +141,7 @@ class MetricSender:
                     metric = await self._get_queued_metric_or_none()
                     if metric is None:
                         continue
-                    self.protocol.send(metric)
+                    self.protocol.send(metric)  # type: ignore
                 else:
                     limited_logger.warning('No connection to telegraf agent')
                     await asyncio.sleep(self.RECONNECTION_DELAY)
@@ -151,7 +151,7 @@ class MetricSender:
             except Exception as exc:
                 logger.exception(exc)
 
-        if not self.queue.empty():
+        if not self.queue.empty() and self.protocol is not None:
             for _ in range(self.queue.qsize()):
                 if not self.connected:
                     break
@@ -186,7 +186,7 @@ class MetricSender:
                 return async_queue
         return async_queue
 
-    async def _create_transport(self) -> t.Tuple[asyncio.BaseTransport, 'StatsdProtocol']:
+    async def _create_transport(self) -> t.Tuple[asyncio.BaseTransport, 'TelegrafProtocol']:
         if self._protocol == socket.IPPROTO_TCP:
             transport, protocol = await asyncio.get_running_loop().create_connection(
                 protocol_factory=TCPProtocol,
@@ -201,7 +201,7 @@ class MetricSender:
             )
         else:
             raise RuntimeError(f'ip_protocol {self._protocol} is not supported')
-        return transport, t.cast(StatsdProtocol, protocol)
+        return transport, t.cast(TelegrafProtocol, protocol)
 
     async def _connect_if_necessary(self) -> None:
         if self.protocol is not None:

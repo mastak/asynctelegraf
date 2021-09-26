@@ -7,7 +7,7 @@ from asynctelegraf.utils import LimitedLog
 logger: logging.Logger = t.cast(logging.Logger, LimitedLog(logger_src=logging.getLogger(__name__)))
 
 
-class StatsdProtocol(asyncio.BaseProtocol):
+class TelegrafProtocol(asyncio.BaseProtocol):
     def __init__(self):
         self.connected = asyncio.Event()
         self.transport = None
@@ -26,7 +26,7 @@ class StatsdProtocol(asyncio.BaseProtocol):
         self.connected.clear()
 
 
-class TCPProtocol(StatsdProtocol, asyncio.Protocol):
+class TCPProtocol(TelegrafProtocol, asyncio.Protocol):
     def eof_received(self) -> None:
         logger.warning('Received EOF from telegraf server')
         self.connected.clear()
@@ -42,7 +42,7 @@ class TCPProtocol(StatsdProtocol, asyncio.Protocol):
                 await asyncio.sleep(0.1)
 
 
-class UDPProtocol(StatsdProtocol, asyncio.DatagramProtocol):
+class UDPProtocol(TelegrafProtocol, asyncio.DatagramProtocol):
     def send(self, metric: bytes) -> None:
         self.transport.sendto(metric)
 

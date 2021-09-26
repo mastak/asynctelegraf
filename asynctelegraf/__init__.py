@@ -1,2 +1,2 @@
-from .client import TelegrafClient
-from .protocol import UDPProtocol, TCPProtocol
+from .client import TelegrafClient  # noqa
+from .protocol import TCPProtocol, UDPProtocol  # noqa
